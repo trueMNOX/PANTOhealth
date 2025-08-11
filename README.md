@@ -99,7 +99,7 @@ Once running:
 ### Producer
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET    | `/produce-sample` | Sends sample x-ray data to RabbitMQ |
+| GET    | `/send` | Sends sample x-ray data to RabbitMQ |
 
 ---
 
