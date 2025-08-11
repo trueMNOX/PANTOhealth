@@ -29,7 +29,7 @@ This project processes x-ray data from IoT devices via RabbitMQ, stores processe
 
 ### 1. Clone the Repository
 ```bash
-git clone <your-repo-url>
+git clone <https://github.com/trueMNOX/PANTOhealth.git>
 cd panto-health-backend
 ```
 
