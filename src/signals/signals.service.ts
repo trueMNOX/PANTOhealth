@@ -19,13 +19,13 @@ export class SignalsService {
             const deviceData = rawData[deviceId]
             const time = deviceData.time
             const dataArray = deviceData.data || []
-            const dataLenght = deviceData.length
+            const dataLength = deviceData.length
             const dataVolume = Buffer.byteLength(JSON.stringify(dataArray), 'utf8')
 
             const signal = new this.signalModel({
                 deviceId,
                 time,
-                dataLenght,
+                dataLength: dataLength,
                 dataVolume,
                 rawData
             })
@@ -42,8 +42,48 @@ export class SignalsService {
 
     }
 
-    async findAll ():Promise<Signal[]> {
+    async findAll(): Promise<Signal[]> {
         return this.signalModel.find().exec()
     }
 
+    async findById(id: string): Promise<Signal | null> {
+        const result = await this.signalModel.findById(id).exec();
+        if (!result) {
+            this.logger.warn("the item is not found")
+            return null;
+        }
+        return result.toObject();
+    }
+    async Update(id: string, updateData: Partial<Signal>): Promise<Signal | null> {
+        const result = await this.signalModel.findById(id).exec();
+        if (!result) {
+            this.logger.warn("the item is not found")
+            return null;
+        }
+        return this.signalModel.findByIdAndUpdate(id, updateData, { new: true }).exec()
+    }
+
+    async Delete(id: string): Promise<boolean> {
+        const result = await this.signalModel.findById(id).exec();
+        if (!result) {
+            this.logger.warn("the item is not found")
+        }
+        const item = await this.signalModel.findByIdAndDelete(id).exec()
+        return !!item
+    }
+
+    async FilterSignal(deviceId?: string, from?: string, to?: string): Promise<Signal[]> {
+        const query: any = {}
+        if (deviceId) {
+            query.deviceId = deviceId
+        }
+
+        if (from || to) {
+            query.time = {}
+            if (from) query.time.$gte = Number(from)
+            if (to) query.time.$lte = Number(to)
+        }
+
+        return this.signalModel.find(query).exec()
+    }
 }

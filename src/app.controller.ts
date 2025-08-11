@@ -24,12 +24,6 @@ export class AppController {
         }
     }
 
-    @Get("consume")
-    StartConsumer(){
-        this.rabbitmqService.ConsumeMessage((msg)=> {
-            console.log('Processing message:', msg);
-        })
-        return { status: 'Consumer started' };
-    }
+    
 
 }
