@@ -14,14 +14,14 @@ This project processes x-ray data from IoT devices via RabbitMQ, stores processe
 - **Producer Application** to simulate IoT device data
 - **Swagger API Documentation**
 - **Unit Tests** for key services
-- **Dockerized** MongoDB and RabbitMQ for local development
+- **Dockerized** MongoDB, RabbitMQ, and NestJS application for local development and deployment
 
 ---
 
 ## 🛠 Prerequisites
-- [Node.js](https://nodejs.org/) >= 18
+- [Node.js](https://nodejs.org/) >= 18 (only if running locally without Docker)
 - [Docker](https://www.docker.com/)
-- [NestJS CLI](https://docs.nestjs.com/cli/overview)
+- [NestJS CLI](https://docs.nestjs.com/cli/overview) (optional for development)
 
 ---
 
@@ -53,28 +53,32 @@ MONGO_URI=mongodb://mongo:changeme@localhost:27017/panto?authSource=admin
 
 ---
 
-### 3. Start Infrastructure (MongoDB + RabbitMQ)
+### 3. Run Infrastructure Only (MongoDB + RabbitMQ)
+If you want to run only the databases and message queue via Docker (and start NestJS manually):
 ```bash
-docker-compose up -d
+docker-compose up -d mongo rabbitmq
 ```
-
-Services:
-- RabbitMQ Management UI → `http://localhost:15672` (default user/pass: guest/guest)
-- MongoDB → `mongodb://localhost:27017`
-
----
-
-### 4. Install Dependencies
+Then run the app locally:
 ```bash
 npm install
+npm run start:dev
 ```
 
 ---
 
-### 5. Run the Application
+### 4. Run the Entire System with Docker
+To run **MongoDB**, **RabbitMQ**, and **NestJS** together via Docker Compose:
 ```bash
-npm run start:dev
+docker-compose up --build
 ```
+This will start:
+- **NestJS App** → http://localhost:3000
+- **RabbitMQ Management UI** → http://localhost:15672
+- **MongoDB** → mongodb://localhost:27017
+
+Once running:
+- Swagger API Docs → http://localhost:3000/api
+- Producer Endpoint → http://localhost:3000/produce-sample
 
 ---
 
@@ -95,7 +99,7 @@ npm run start:dev
 ### Producer
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET    | `/send` | Sends sample x-ray data to RabbitMQ |
+| GET    | `/produce-sample` | Sends sample x-ray data to RabbitMQ |
 
 ---
 
@@ -131,6 +135,8 @@ src/
 │   ├── producer.module.ts
 │   ├── producer.service.ts
 │   └── sample-data.json
+Dockerfile
+docker-compose.yml
 ```
 
 ---
@@ -147,6 +153,13 @@ services:
     image: mongo:6
     ports:
       - "27017:27017"
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongo
+      - rabbitmq
 ```
 
 ---
@@ -159,4 +172,4 @@ services:
 ---
 
 ## 👨‍💻 Author
-Backend implementation by @trueMNOX /Mehdi Beizavi.
+Backend implementation by @trueMNOX // MehdiBeizavi.

@@ -1,7 +1,6 @@
 version: "3.8"
 
 services:
-
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
@@ -14,16 +13,28 @@ services:
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
 
-  mogodb:
+  mongo:
     image: mongo:6
     container_name: mongo
     ports:
-     - "27017:27017"
+      - "27017:27017"
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
     volumes:
       - mongo_data:/data/db
+
+  app:
+    build: .
+    container_name: panto_app
+    ports:
+      - "3000:3000"
+    environment:
+      - RABBITMQ_URL=amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@rabbitmq:5672
+      - MONGO_URI=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongo:27017/${MONGO_DB_NAME}?authSource=admin
+    depends_on:
+      - mongo
+      - rabbitmq
 
 volumes:
   rabbitmq_data:
