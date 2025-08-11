@@ -1,6 +1,7 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as amqp from "amqplib";
+import { SignalsService } from 'src/signals/signals.service';
 
 
 @Injectable()
@@ -13,7 +14,8 @@ export class RabbitmqService implements OnModuleInit, OnModuleDestroy {
     private readonly queueName = 'x-ray'
 
     constructor(
-        private config: ConfigService
+        private config: ConfigService,
+        private readonly signalService: SignalsService
     ) { }
 
     async onModuleInit() {
@@ -28,6 +30,9 @@ export class RabbitmqService implements OnModuleInit, OnModuleDestroy {
 
             await this.channel.assertQueue(this.queueName, { durable: true })
             this.logger.log(`Queue "${this.queueName}" is ready`);
+
+            await this.ConsumeMessage()
+
         } catch (err) {
             this.logger.error('Failed to connect to RabbitMQ', err);
         }
@@ -40,14 +45,22 @@ export class RabbitmqService implements OnModuleInit, OnModuleDestroy {
         this.logger.log(`Sent message to queue "${this.queueName}": ${JSON.stringify(message)}`);
     }
 
-    async ConsumeMessage(onMessage: (msg) => void) {
+    async ConsumeMessage() {
         if (!this.channel) throw new Error('Channel not initialized');
-        await this.channel.consume(this.queueName, (msg) => {
+        await this.channel.consume(this.queueName, async (msg) => {
             if (msg) {
-                const content = JSON.parse(msg.content.toString())
-                this.logger.log(`📥 Received message: ${JSON.stringify(content)}`);
-                onMessage(content)
-                this.channel.ack(msg);
+                try {
+
+                    const content = JSON.parse(msg.content.toString())
+                    this.logger.log(`Received message`)
+
+                    await this.signalService.saveSignal(content)
+                    this.channel.ack(msg)
+
+                } catch (err) {
+                    this.logger.error('Error processing message', err);
+                    this.channel.nack(msg, false, false);
+                }
             }
         })
     }

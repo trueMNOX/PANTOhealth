@@ -12,7 +12,7 @@ export class SignalsService {
         private readonly signalModel: Model<SignalDocument>
     ) { }
 
-    async saveData(rawData: any): Promise<Signal> {
+    async saveSignal(rawData: any): Promise<Signal> {
         try {
 
             const deviceId = Object.keys(rawData)[0]
