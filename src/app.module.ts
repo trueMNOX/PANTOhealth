@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { MongooseModule } from "@nestjs/mongoose";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { RabbitmqModule } from './rabbitmq/rabbitmq.module';
+import { SignalsModule } from './signals/signals.module';
 
 @Module({
   imports: [
@@ -17,7 +18,8 @@ import { RabbitmqModule } from './rabbitmq/rabbitmq.module';
         }),
 
     }),
-    RabbitmqModule
+    RabbitmqModule,
+    SignalsModule
   ],
   controllers: [AppController],
   providers: [AppService],
