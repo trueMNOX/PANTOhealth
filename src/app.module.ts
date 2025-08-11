@@ -5,6 +5,7 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { RabbitmqModule } from './rabbitmq/rabbitmq.module';
 import { SignalsModule } from './signals/signals.module';
+import { ProducerModule } from './producer/producer.module';
 
 @Module({
   imports: [
@@ -19,7 +20,8 @@ import { SignalsModule } from './signals/signals.module';
 
     }),
     RabbitmqModule,
-    SignalsModule
+    SignalsModule,
+    ProducerModule
   ],
   controllers: [AppController],
   providers: [AppService],

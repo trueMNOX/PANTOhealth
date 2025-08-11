@@ -3,8 +3,8 @@ import { RabbitmqService } from './rabbitmq.service';
 import { SignalsModule } from '../signals/signals.module';
 
 @Module({
-  imports: [SignalsModule],
-  providers: [RabbitmqService],
-  exports:[RabbitmqService]
+    imports: [SignalsModule],
+    providers: [RabbitmqService],
+    exports: [RabbitmqService]
 })
-export class RabbitmqModule {}
+export class RabbitmqModule { }

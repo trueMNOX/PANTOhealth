@@ -6,10 +6,10 @@ import { Signal, SignalSchema } from './schemas/signal.schema';
 
 @Module({
     imports: [
-        MongooseModule.forFeature([{ name: Signal.name, schema: SignalSchema }])
+        MongooseModule.forFeature([{ name: Signal.name, schema: SignalSchema }]),
     ],
+    controllers: [SignalsController],
     providers: [SignalsService],
-    exports: [MongooseModule, SignalsService],
-    controllers: [SignalsController]
+    exports: [SignalsService],
 })
 export class SignalsModule { }

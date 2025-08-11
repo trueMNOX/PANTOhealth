@@ -19,7 +19,7 @@ export class SignalsService {
             const deviceData = rawData[deviceId]
             const time = deviceData.time
             const dataArray = deviceData.data || []
-            const dataLength = deviceData.length
+            const dataLength = dataArray.length
             const dataVolume = Buffer.byteLength(JSON.stringify(dataArray), 'utf8')
 
             const signal = new this.signalModel({

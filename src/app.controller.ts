@@ -1,12 +1,13 @@
 import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
 import { RabbitmqService } from './rabbitmq/rabbitmq.service';
+import { ProducerService } from './producer/producer.service';
 
 @Controller()
 export class AppController {
     constructor(
         private readonly appService: AppService,
-        private readonly rabbitmqService: RabbitmqService
+        private readonly productService: ProducerService
     ) { }
 
     @Get()
@@ -16,14 +17,11 @@ export class AppController {
 
 
     @Get("send")
-    SendMessage() {
-        const data = { text: "this is a test data" }
-        this.rabbitmqService.SendMessage(data)
-        return {
-            status: "Message sent"
-        }
+    async ProductSample(){
+        return await this.productService.SendSampleData()
+        return { status: 'Sample data sent' };
     }
 
-    
+
 
 }
