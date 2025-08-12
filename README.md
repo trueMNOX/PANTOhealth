@@ -78,7 +78,7 @@ This will start:
 
 Once running:
 - Swagger API Docs → http://localhost:3000/api
-- Producer Endpoint → http://localhost:3000/produce-sample
+- Producer Endpoint → http://localhost:3000/send
 
 ---
 
